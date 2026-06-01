@@ -1,0 +1,21 @@
+{
+  "name": "GLOW Master",
+  "short_name": "GLOW Master",
+  "description": "Личный кабинет мастера салона красоты",
+  "start_url": "master-app.html",
+  "display": "standalone",
+  "theme_color": "#FF6B9D",
+  "background_color": "#0B0B12",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1044/1044033.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/1044/1044033.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

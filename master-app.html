@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>GLOW Master — Личный кабинет мастера</title>
+    <link rel="manifest" href="manifest.json">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0B0B12;
+            color: #EDEDF0;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* auth screen */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            background: radial-gradient(circle at 20% 30%, #1a0f1a, #0a0a0f);
+        }
+
+        .auth-card {
+            background: rgba(22, 22, 32, 0.95);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 107, 157, 0.3);
+            border-radius: 40px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            animation: fadeSlide 0.4s ease;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            font-family: 'Inter', sans-serif;
+        }
+        .logo em { color: #FF6B9D; font-style: italic; }
+        .sub {
+            text-align: center;
+            color: #8E8EA8;
+            font-size: 0.8rem;
+            margin: 8px 0 28px;
+        }
+        .input-group {
+            margin-bottom: 16px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #A0A0C0;
+            margin-bottom: 6px;
+        }
+        .auth-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: #12121A;
+            border: 1px solid #2A2A3A;
+            border-radius: 24px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .auth-input:focus {
+            border-color: #FF6B9D;
+            box-shadow: 0 0 0 2px rgba(255,107,157,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #FF6B9D, #C4452C);
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 1rem;
+            color: white;
+            margin-top: 8px;
+            cursor: pointer;
+            transition: transform 0.1s, box-shadow 0.2s;
+        }
+        .btn-primary:active { transform: scale(0.97); }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #FF6B9D;
+            padding: 12px;
+            border-radius: 30px;
+            color: #FF6B9D;
+            font-weight: 500;
+            width: 100%;
+            margin-top: 12px;
+            cursor: pointer;
+        }
+        .switch-auth {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #aaa;
+        }
+        .switch-auth a {
+            color: #FF6B9D;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .error-msg {
+            color: #FF6B9D;
+            font-size: 0.8rem;
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* MAIN APP (after login) */
+        .app-container {
+            display: none;
+            max-width: 600px;
+            margin: 0 auto;
+            background: #0B0B12;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        .app-header {
+            position: sticky;
+            top: 0;
+            background: rgba(11,11,18,0.95);
+            backdrop-filter: blur(10px);
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #1E1E2A;
+            z-index: 10;
+        }
+        .app-header h1 {
+            font-size: 1.35rem;
+            font-weight: 600;
+        }
+        .app-header h1 em { color: #FF6B9D; font-style: italic; }
+        .master-badge {
+            background: #1E1E2A;
+            padding: 6px 12px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .logout-btn {
+            background: none;
+            border: none;
+            color: #A0A0C0;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        /* date navigation */
+        .date-nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 20px;
+            background: #12121A;
+            margin: 16px;
+            border-radius: 60px;
+        }
+        .date-nav button {
+            background: #2A2A3A;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 40px;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        .current-date {
+            font-weight: 600;
+            font-size: 1rem;
+            text-align: center;
+        }
+        /* schedule grid (hours) */
+        .schedule {
+            padding: 0 16px;
+        }
+        .hour-row {
+            display: flex;
+            align-items: center;
+            background: #111118;
+            margin-bottom: 8px;
+            border-radius: 20px;
+            border-left: 4px solid #FF6B9D;
+            transition: 0.1s;
+        }
+        .hour-time {
+            width: 70px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: #FF6B9D;
+        }
+        .booking-card {
+            flex: 1;
+            padding: 12px 12px;
+            background: #1A1A26;
+            border-radius: 16px;
+            margin: 6px 12px 6px 0;
+            position: relative;
+        }
+        .empty-slot {
+            flex: 1;
+            padding: 12px;
+            color: #5A5A72;
+            font-size: 0.8rem;
+            text-align: center;
+        }
+        .client-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+        .service {
+            font-size: 0.75rem;
+            color: #FFB3C6;
+            margin-top: 4px;
+        }
+        .client-phone {
+            font-size: 0.7rem;
+            color: #aaa;
+            margin-top: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .booking-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .booking-actions button {
+            background: #2A2A3A;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            cursor: pointer;
+            color: #ddd;
+        }
+        .booking-actions .delete-btn {
+            background: #3A1A1A;
+            color: #FF8888;
+        }
+        .booking-actions .done-btn {
+            background: #1A3A2A;
+            color: #88FF88;
+        }
+        .notification-permission {
+            background: #1E1E2A;
+            margin: 16px;
+            padding: 12px;
+            border-radius: 20px;
+            text-align: center;
+            font-size: 0.8rem;
+        }
+        .btn-small {
+            background: #FF6B9D;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 30px;
+            color: white;
+            margin-top: 6px;
+            cursor: pointer;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            right: 20px;
+            background: #1E1E2A;
+            padding: 12px;
+            border-radius: 30px;
+            text-align: center;
+            font-size: 0.8rem;
+            z-index: 200;
+            transition: 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .toast.show {
+            opacity: 1;
+        }
+        footer {
+            text-align: center;
+            font-size: 0.7rem;
+            color: #4A4A62;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Экран авторизации / регистрации -->
+<div id="authScreen" class="auth-container">
+    <div class="auth-card">
+        <div class="logo">GLOW <em>Master</em></div>
+        <div class="sub">Личный кабинет мастера</div>
+        <div id="authTabs">
+            <div id="loginPanel">
+                <div class="input-group"><label>Имя мастера</label><input type="text" id="loginName" class="auth-input" placeholder="Например: Анна"></div>
+                <div class="input-group"><label>Пароль мастера</label><input type="password" id="loginPassword" class="auth-input" placeholder="Кодовое слово"></div>
+                <button id="doLoginBtn" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Войти</button>
+                <div class="switch-auth">Нет аккаунта? <a href="#" id="showRegisterLink">Зарегистрироваться</a></div>
+            </div>
+            <div id="registerPanel" style="display:none;">
+                <div class="input-group"><label>Имя мастера</label><input type="text" id="regName" class="auth-input" placeholder="Анна Соколова"></div>
+                <div class="input-group"><label>Телефон (для связи)</label><input type="tel" id="regPhone" class="auth-input" placeholder="+7 777 123 4567"></div>
+                <div class="input-group"><label>Пароль (секретная фраза)</label><input type="password" id="regPassword" class="auth-input" placeholder="придумайте пароль"></div>
+                <button id="doRegisterBtn" class="btn-primary"><i class="fas fa-user-plus"></i> Зарегистрироваться</button>
+                <div class="switch-auth">Уже есть аккаунт? <a href="#" id="showLoginLink">Войти</a></div>
+            </div>
+        </div>
+        <div id="authError" class="error-msg"></div>
+    </div>
+</div>
+
+<!-- Главное приложение мастера -->
+<div id="masterApp" class="app-container">
+    <div class="app-header">
+        <h1>GLOW <em>Master</em></h1>
+        <div class="master-badge"><i class="fas fa-user-check"></i> <span id="masterNameDisplay"></span></div>
+        <button id="logoutMainBtn" class="logout-btn"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+
+    <div class="date-nav">
+        <button id="prevDayBtn"><i class="fas fa-chevron-left"></i></button>
+        <div class="current-date" id="currentDateLabel">Сегодня</div>
+        <button id="nextDayBtn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+
+    <div id="scheduleContainer" class="schedule"></div>
+
+    <div class="notification-permission" id="notifBox">
+        <i class="fas fa-bell"></i> Включите уведомления, чтобы получать напоминания за час до записи
+        <button id="requestNotifBtn" class="btn-small">Разрешить</button>
+    </div>
+    <footer>Записи синхронизируются автоматически</footer>
+</div>
+
+<div id="toastMsg" class="toast"></div>
+
+<script>
+    // ---- Конфигурация ----
+    const STORAGE_MASTERS = "glow_masters";      // список мастеров
+    const STORAGE_BOOKINGS = "glow_bookings";    // все записи клиентов (общие)
+    const CURRENT_MASTER = "glow_current_master";
+
+    // Часы работы (10:00 - 21:00 с шагом 1 час для простоты)
+    const WORK_HOURS = ["10:00","11:00","12:00","13:00","14:00","15:00","16:00","17:00","18:00","19:00","20:00","21:00"];
+
+    let currentMaster = null;      // { id, name, phone, password }
+    let currentViewDate = new Date(); // просматриваемая дата
+
+    let bookings = [];              // записи из localStorage
+    let masters = [];
+
+    let notificationInterval = null;
+
+    // ---- Инициализация хранилищ ----
+    function loadData() {
+        const storedMasters = localStorage.getItem(STORAGE_MASTERS);
+        if (storedMasters) masters = JSON.parse(storedMasters);
+        else {
+            // демо-мастер для теста (пароль 123)
+            masters = [{ id: 1, name: "Анна Соколова", phone: "+77771234567", password: "123" }];
+            localStorage.setItem(STORAGE_MASTERS, JSON.stringify(masters));
+        }
+
+        const storedBookings = localStorage.getItem(STORAGE_BOOKINGS);
+        if (storedBookings) bookings = JSON.parse(storedBookings);
+        else bookings = [];
+
+        const savedMaster = localStorage.getItem(CURRENT_MASTER);
+        if (savedMaster) {
+            try {
+                currentMaster = JSON.parse(savedMaster);
+                // проверим, существует ли ещё такой мастер
+                const exists = masters.find(m => m.id === currentMaster.id);
+                if (exists) {
+                    showApp();
+                } else {
+                    logout();
+                }
+            } catch(e) { logout(); }
+        } else {
+            // остаёмся на экране входа
+        }
+    }
+
+    function saveMasters() { localStorage.setItem(STORAGE_MASTERS, JSON.stringify(masters)); }
+    function saveBookings() { localStorage.setItem(STORAGE_BOOKINGS, JSON.stringify(bookings)); }
+    function saveCurrentMaster() {
+        if (currentMaster) localStorage.setItem(CURRENT_MASTER, JSON.stringify(currentMaster));
+        else localStorage.removeItem(CURRENT_MASTER);
+    }
+
+    // ---- Утилиты ----
+    function formatDateKey(date) { return date.toISOString().slice(0,10); }
+    function formatDisplayDate(date) {
+        const today = new Date();
+        const tomorrow = new Date(today); tomorrow.setDate(today.getDate()+1);
+        if (date.toDateString() === today.toDateString()) return "Сегодня, " + date.toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+        if (date.toDateString() === tomorrow.toDateString()) return "Завтра, " + date.toLocaleDateString('ru-RU', {day:'numeric', month:'long'});
+        return date.toLocaleDateString('ru-RU', {weekday: 'short', day:'numeric', month:'long'});
+    }
+
+    // Получить записи мастера на конкретную дату
+    function getBookingsForMaster(masterId, date) {
+        const dateStr = formatDateKey(date);
+        return bookings.filter(b => b.masterId === masterId && b.date === dateStr && b.status !== 'deleted');
+    }
+
+    // рендер расписания по часам
+    function renderSchedule() {
+        const container = document.getElementById("scheduleContainer");
+        if (!container || !currentMaster) return;
+
+        const date = currentViewDate;
+        const dateStr = formatDateKey(date);
+        const dayBookings = getBookingsForMaster(currentMaster.id, date);
+        // map по времени
+        const bookingsMap = {};
+        dayBookings.forEach(b => { bookingsMap[b.time] = b; });
+
+        let html = '';
+        for (let hour of WORK_HOURS) {
+            const booking = bookingsMap[hour];
+            if (booking) {
+                html += `
+                    <div class="hour-row">
+                        <div class="hour-time">${hour}</div>
+                        <div class="booking-card">
+                            <div class="client-name"><i class="fas fa-user"></i> ${escapeHtml(booking.clientName)}</div>
+                            <div class="service"><i class="fas fa-cut"></i> ${escapeHtml(booking.serviceName)} (${booking.servicePrice})</div>
+                            <div class="client-phone"><i class="fas fa-phone-alt"></i> ${escapeHtml(booking.clientPhone)}</div>
+                            ${booking.comment ? `<div class="client-phone"><i class="fas fa-comment"></i> ${escapeHtml(booking.comment)}</div>` : ''}
+                            <div class="booking-actions">
+                                <button class="done-btn" data-id="${booking.id}" data-action="done"><i class="fas fa-check"></i> Выполнено</button>
+                                <button class="delete-btn" data-id="${booking.id}" data-action="delete"><i class="fas fa-trash"></i> Отменить</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="hour-row">
+                        <div class="hour-time">${hour}</div>
+                        <div class="empty-slot">✨ свободно</div>
+                    </div>
+                `;
+            }
+        }
+        container.innerHTML = html;
+
+        // вешаем обработчики на кнопки
+        document.querySelectorAll('.done-btn, .delete-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const id = parseInt(btn.getAttribute('data-id'));
+                const action = btn.getAttribute('data-action');
+                if (action === 'delete') {
+                    if (confirm('Удалить запись клиента?')) {
+                        deleteBooking(id);
+                    }
+                } else if (action === 'done') {
+                    if (confirm('Отметить как выполненную? Запись будет перемещена в архив.')) {
+                        completeBooking(id);
+                    }
+                }
+            });
+        });
+    }
+
+    function deleteBooking(bookingId) {
+        const index = bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1 && bookings[index].masterId === currentMaster.id) {
+            bookings[index].status = 'deleted';
+            saveBookings();
+            renderSchedule();
+            showToast('Запись удалена');
+            // перепланировать уведомления
+            scheduleNotifications();
+        }
+    }
+
+    function completeBooking(bookingId) {
+        const index = bookings.findIndex(b => b.id === bookingId);
+        if (index !== -1 && bookings[index].masterId === currentMaster.id) {
+            bookings[index].status = 'completed';
+            saveBookings();
+            renderSchedule();
+            showToast('Запись выполнена');
+            scheduleNotifications();
+        }
+    }
+
+    // ---- Уведомления за час до записи ----
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(perm => {
+                if (perm === 'granted') {
+                    showToast('Уведомления включены');
+                    document.getElementById('notifBox').style.display = 'none';
+                    scheduleNotifications();
+                } else {
+                    showToast('Не удалось включить уведомления');
+                }
+            });
+        } else {
+            showToast('Ваш браузер не поддерживает уведомления');
+        }
+    }
+
+    function scheduleNotifications() {
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+        if (notificationInterval) clearInterval(notificationInterval);
+        // Проверяем каждые 30 секунд приближающиеся записи
+        function checkUpcoming() {
+            if (!currentMaster) return;
+            const now = new Date();
+            const currentHourMin = now.getHours() * 60 + now.getMinutes();
+            const todayStr = formatDateKey(now);
+            const upcomingBookings = bookings.filter(b => 
+                b.masterId === currentMaster.id && 
+                b.status === 'active' &&
+                b.date === todayStr
+            );
+            for (let booking of upcomingBookings) {
+                const [hour, minute] = booking.time.split(':').map(Number);
+                const bookingMinutes = hour * 60 + (minute || 0);
+                const diffMinutes = bookingMinutes - currentHourMin;
+                // если через 55-65 минут и ещё не уведомляли
+                if (diffMinutes > 55 && diffMinutes <= 65 && !booking.notifiedHourBefore) {
+                    // отправить уведомление
+                    new Notification(`🧑‍🎤 Запись через час`, {
+                        body: `${booking.clientName} — ${booking.serviceName} в ${booking.time}`,
+                        icon: 'https://cdn-icons-png.flaticon.com/512/1044/1044033.png'
+                    });
+                    booking.notifiedHourBefore = true;
+                    saveBookings();
+                }
+            }
+        }
+        checkUpcoming();
+        notificationInterval = setInterval(checkUpcoming, 30000);
+    }
+
+    // ---- Навигация по дням ----
+    function changeDate(delta) {
+        const newDate = new Date(currentViewDate);
+        newDate.setDate(currentViewDate.getDate() + delta);
+        currentViewDate = newDate;
+        document.getElementById('currentDateLabel').innerText = formatDisplayDate(currentViewDate);
+        renderSchedule();
+    }
+
+    // ---- Авторизация ----
+    function register() {
+        const name = document.getElementById('regName').value.trim();
+        const phone = document.getElementById('regPhone').value.trim();
+        const password = document.getElementById('regPassword').value;
+        if (!name || !phone || !password) {
+            showAuthError('Заполните все поля');
+            return;
+        }
+        if (masters.find(m => m.name.toLowerCase() === name.toLowerCase())) {
+            showAuthError('Мастер с таким именем уже существует');
+            return;
+        }
+        const newId = masters.length ? Math.max(...masters.map(m=>m.id)) + 1 : 1;
+        const newMaster = { id: newId, name, phone, password };
+        masters.push(newMaster);
+        saveMasters();
+        showAuthError('Регистрация успешна! Теперь войдите.', 'success');
+        // переключиться на логин
+        showLoginPanel();
+        document.getElementById('loginName').value = name;
+    }
+
+    function login() {
+        const name = document.getElementById('loginName').value.trim();
+        const password = document.getElementById('loginPassword').value;
+        const master = masters.find(m => m.name.toLowerCase() === name.toLowerCase() && m.password === password);
+        if (!master) {
+            showAuthError('Неверное имя или пароль');
+            return;
+        }
+        currentMaster = master;
+        saveCurrentMaster();
+        showApp();
+    }
+
+    function showApp() {
+        document.getElementById('authScreen').style.display = 'none';
+        document.getElementById('masterApp').style.display = 'block';
+        document.getElementById('masterNameDisplay').innerText = currentMaster.name;
+        // установить сегодняшнюю дату
+        currentViewDate = new Date();
+        document.getElementById('currentDateLabel').innerText = formatDisplayDate(currentViewDate);
+        renderSchedule();
+        // Проверим уведомления
+        if (Notification.permission === 'granted') {
+            document.getElementById('notifBox').style.display = 'none';
+            scheduleNotifications();
+        } else {
+            document.getElementById('notifBox').style.display = 'block';
+        }
+    }
+
+    function logout() {
+        currentMaster = null;
+        saveCurrentMaster();
+        if (notificationInterval) clearInterval(notificationInterval);
+        document.getElementById('authScreen').style.display = 'flex';
+        document.getElementById('masterApp').style.display = 'none';
+        document.getElementById('loginName').value = '';
+        document.getElementById('loginPassword').value = '';
+    }
+
+    function showAuthError(msg, isSuccess = false) {
+        const errDiv = document.getElementById('authError');
+        errDiv.innerText = msg;
+        errDiv.style.color = isSuccess ? '#88FF88' : '#FF6B9D';
+        setTimeout(() => { errDiv.innerText = ''; }, 3000);
+    }
+
+    function showLoginPanel() {
+        document.getElementById('loginPanel').style.display = 'block';
+        document.getElementById('registerPanel').style.display = 'none';
+    }
+    function showRegisterPanel() {
+        document.getElementById('loginPanel').style.display = 'none';
+        document.getElementById('registerPanel').style.display = 'block';
+    }
+
+    function showToast(msg) {
+        const toast = document.getElementById('toastMsg');
+        toast.innerText = msg;
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // ---- Обработчики событий ----
+    document.getElementById('doLoginBtn').addEventListener('click', login);
+    document.getElementById('doRegisterBtn').addEventListener('click', register);
+    document.getElementById('showRegisterLink').addEventListener('click', (e) => { e.preventDefault(); showRegisterPanel(); });
+    document.getElementById('showLoginLink').addEventListener('click', (e) => { e.preventDefault(); showLoginPanel(); });
+    document.getElementById('logoutMainBtn').addEventListener('click', logout);
+    document.getElementById('prevDayBtn').addEventListener('click', () => changeDate(-1));
+    document.getElementById('nextDayBtn').addEventListener('click', () => changeDate(1));
+    document.getElementById('requestNotifBtn').addEventListener('click', requestNotificationPermission);
+
+    // Загрузка данных и старт
+    loadData();
+
+    // автоматически обновлять расписание если изменились данные из другой вкладки
+    window.addEventListener('storage', (e) => {
+        if (e.key === STORAGE_BOOKINGS && currentMaster) {
+            loadData();
+            renderSchedule();
+            scheduleNotifications();
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>ONEVAKZ — Салон красоты</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<!-- AUTH BAR -->
+<div class="auth-bar">
+  <div class="auth-bar__inner">
+    <span class="auth-bar__info">Тараз, Казахстан · 10:00 – 19:00</span>
+    <div class="auth-bar__actions" id="auth-actions">
+      <a href="#" onclick="openModal('login-modal')">Войти</a>
+      <a href="#" onclick="openModal('register-modal')" class="auth-bar__reg">Регистрация</a>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav class="nav">
+  <a class="nav__logo" href="#" onclick="showPage('home')">ONEVAKZ</a>
+  <div class="nav__search-wrap">
+    <input class="nav__search" type="text" placeholder="Поиск услуги или мастера..." id="search-input" oninput="handleSearch(this.value)" onfocus="showSearchDrop()" />
+    <div class="search-drop" id="search-drop"></div>
+  </div>
+  <div class="nav__links">
+    <a href="#" onclick="showPage('home')">Главная</a>
+    <a href="#" onclick="showPage('services-page')">Услуги</a>
+    <a href="#" onclick="showPage('masters-page')">Мастера</a>
+    <a href="#" onclick="showPage('about-page')">О салоне</a>
+    <button class="btn-primary" onclick="showPage('booking')">Записаться</button>
+  </div>
+  <button class="nav__burger" onclick="toggleMenu()"><span></span><span></span></button>
+</nav>
+<div class="nav__mobile" id="mobile-menu">
+  <a href="#" onclick="showPage('home');toggleMenu()">Главная</a>
+  <a href="#" onclick="showPage('services-page');toggleMenu()">Услуги</a>
+  <a href="#" onclick="showPage('masters-page');toggleMenu()">Мастера</a>
+  <a href="#" onclick="showPage('about-page');toggleMenu()">О салоне</a>
+  <a href="#" onclick="showPage('booking');toggleMenu()">Записаться</a>
+</div>
+
+<!-- LOGIN MODAL -->
+<div class="modal-overlay" id="login-modal" onclick="closeModalOutside(event,'login-modal')">
+  <div class="modal">
+    <div class="modal__head"><span>Вход</span><button onclick="closeModal('login-modal')">✕</button></div>
+    <div class="form-group"><label>Телефон</label><input type="tel" placeholder="+7 (___) ___-__-__"/></div>
+    <div class="form-group"><label>Пароль</label><input type="password" placeholder="••••••"/></div>
+    <button class="btn-primary btn-full" style="margin-top:1rem">Войти</button>
+    <p class="modal__switch">Нет аккаунта? <a href="#" onclick="closeModal('login-modal');openModal('register-modal')">Зарегистрироваться</a></p>
+  </div>
+</div>
+
+<!-- REGISTER MODAL -->
+<div class="modal-overlay" id="register-modal" onclick="closeModalOutside(event,'register-modal')">
+  <div class="modal">
+    <div class="modal__head"><span>Регистрация</span><button onclick="closeModal('register-modal')">✕</button></div>
+    <div class="form-group"><label>Имя</label><input type="text" placeholder="Ваше имя"/></div>
+    <div class="form-group"><label>Телефон</label><input type="tel" placeholder="+7 (___) ___-__-__"/></div>
+    <div class="form-group"><label>Пароль</label><input type="password" placeholder="••••••"/></div>
+    <button class="btn-primary btn-full" style="margin-top:1rem">Зарегистрироваться</button>
+    <p class="modal__switch">Уже есть аккаунт? <a href="#" onclick="closeModal('register-modal');openModal('login-modal')">Войти</a></p>
+  </div>
+</div>
+
+<!-- HOME PAGE -->
+<div id="home" class="page active">
+  <section class="hero">
+    <div class="hero__label">Салон красоты · Тараз</div>
+    <h1 class="hero__title">One place.<br><em>All beauty.</em></h1>
+    <p class="hero__sub">Запишитесь онлайн к мастеру<br>в удобное для вас время</p>
+    <div class="hero__actions">
+      <button class="btn-primary btn-lg" onclick="showPage('booking')">Записаться онлайн</button>
+      <button class="btn-ghost btn-lg" onclick="showPage('services-page')">Смотреть услуги</button>
+    </div>
+  </section>
+
+  <section class="popular-section">
+    <div class="popular-section__header">
+      <span class="section__tag">Популярные услуги</span>
+    </div>
+    <div class="popular-list" id="popular-list"></div>
+    <div class="popular-section__footer">
+      <button class="btn-ghost" onclick="showPage('services-page')">Все услуги →</button>
+    </div>
+  </section>
+
+  <section class="stats-strip">
+    <div class="stats-strip__item"><div class="stats-strip__num">10:00–19:00</div><div class="stats-strip__label">Ежедневно</div></div>
+    <div class="stats-strip__item"><div class="stats-strip__num" id="stat-masters">4</div><div class="stats-strip__label">Мастера</div></div>
+    <div class="stats-strip__item"><div class="stats-strip__num">30+</div><div class="stats-strip__label">Услуг</div></div>
+    <div class="stats-strip__item"><div class="stats-strip__num">Тараз</div><div class="stats-strip__label">Казахстан</div></div>
+  </section>
+</div>
+
+<!-- SERVICES PAGE -->
+<div id="services-page" class="page">
+  <div class="page-hero">
+    <div class="section__tag">Услуги</div>
+    <h2 class="page-hero__title">Все услуги</h2>
+  </div>
+  <div class="section">
+    <div class="category-tabs" id="svc-cat-tabs"></div>
+    <div class="services-list" id="services-list"></div>
+  </div>
+</div>
+
+<!-- MASTERS PAGE -->
+<div id="masters-page" class="page">
+  <div class="page-hero">
+    <div class="section__tag">Команда</div>
+    <h2 class="page-hero__title">Наши мастера</h2>
+  </div>
+  <div class="section">
+    <div class="masters-grid" id="masters-grid"></div>
+  </div>
+</div>
+
+<!-- ABOUT PAGE -->
+<div id="about-page" class="page">
+  <div class="page-hero">
+    <div class="section__tag">О нас</div>
+    <h2 class="page-hero__title">О салоне</h2>
+  </div>
+  <div class="section about-section">
+    <div class="about-info">
+      <div class="about-block">
+        <div class="about-block__icon">📍</div>
+        <div>
+          <div class="about-block__title">Адрес</div>
+          <div class="about-block__text">г. Тараз, ул. Толе би, 53<br>Казахстан, 080000</div>
+        </div>
+      </div>
+      <div class="about-block">
+        <div class="about-block__icon">📞</div>
+        <div>
+          <div class="about-block__title">Телефон</div>
+          <div class="about-block__text"><a href="tel:+77001234567">+7 (700) 123-45-67</a><br><span style="font-size:12px;color:var(--text-muted)">Ежедневно 10:00 – 19:00</span></div>
+        </div>
+      </div>
+      <div class="about-block">
+        <div class="about-block__icon">🕐</div>
+        <div>
+          <div class="about-block__title">Часы работы</div>
+          <div class="about-block__text">Пн – Вс: 10:00 – 19:00<br>Без выходных</div>
+        </div>
+      </div>
+      <div class="about-block">
+        <div class="about-block__icon">✉️</div>
+        <div>
+          <div class="about-block__title">WhatsApp</div>
+          <div class="about-block__text"><a href="https://wa.me/77001234567">+7 (700) 123-45-67</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="about-map">
+      <div class="map-placeholder">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2926.0!2d71.3712!3d42.9004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x38958a3dcc8f2c3b%3A0x1!2z0KLQsNGA0LDQtyDQmtCw0LfQsNGF0YHRgtCw0L0!5e0!3m2!1sru!2skz!4v1"
+          width="100%" height="360" style="border:0;border-radius:12px;" allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BOOKING PAGE -->
+<div id="booking" class="page">
+  <div class="page-hero">
+    <div class="section__tag">Онлайн-запись</div>
+    <h2 class="page-hero__title">Запись</h2>
+  </div>
+  <div class="section booking-section">
+    <div class="booking-steps" id="booking-steps">
+      <div class="bstep active" id="bstep-ind-1"><span class="bstep__num">1</span><span class="bstep__label">Услуга</span></div>
+      <div class="bstep__line"></div>
+      <div class="bstep" id="bstep-ind-2"><span class="bstep__num">2</span><span class="bstep__label">Мастер</span></div>
+      <div class="bstep__line"></div>
+      <div class="bstep" id="bstep-ind-3"><span class="bstep__num">3</span><span class="bstep__label">Дата</span></div>
+      <div class="bstep__line"></div>
+      <div class="bstep" id="bstep-ind-4"><span class="bstep__num">4</span><span class="bstep__label">Данные</span></div>
+    </div>
+
+    <div id="bs1" class="booking-step active">
+      <div class="step-label">Выберите услугу</div>
+      <div class="category-tabs" id="b-cat-tabs"></div>
+      <div class="services-list" id="b-services-list"></div>
+    </div>
+
+    <div id="bs2" class="booking-step">
+      <div class="step-label">Выберите мастера <span id="bs2-hint" style="font-size:11px;color:var(--text-muted);text-transform:none;letter-spacing:0">(показаны мастера по выбранной услуге)</span></div>
+      <div class="masters-grid" id="b-masters-grid"></div>
+    </div>
+
+    <div id="bs3" class="booking-step">
+      <div class="step-label">Выберите дату</div>
+      <div class="calendar">
+        <div class="calendar__header">
+          <button class="cal-btn" onclick="changeMonth(-1)">&#8592;</button>
+          <span class="calendar__month" id="cal-month-label"></span>
+          <button class="cal-btn" onclick="changeMonth(1)">&#8594;</button>
+        </div>
+        <div class="calendar__weekdays"><span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span></div>
+        <div class="calendar__grid" id="cal-grid"></div>
+      </div>
+      <div class="slots-section" id="slots-section" style="display:none">
+        <div class="step-label" style="margin-top:1.5rem">Выберите время</div>
+        <div class="slots-grid" id="slots-grid"></div>
+      </div>
+    </div>
+
+    <div id="bs4" class="booking-step">
+      <div class="step-label">Ваши данные</div>
+      <div class="form-group"><label>Имя</label><input type="text" id="inp-name" placeholder="Например, Айгуль"/></div>
+      <div class="form-group"><label>Телефон</label><input type="tel" id="inp-phone" placeholder="+7 (___) ___-__-__"/></div>
+      <div class="booking-summary">
+        <div class="summary-row"><span>Услуга</span><strong id="sum-svc">—</strong></div>
+        <div class="summary-row"><span>Мастер</span><strong id="sum-master">—</strong></div>
+        <div class="summary-row"><span>Дата</span><strong id="sum-date">—</strong></div>
+        <div class="summary-row"><span>Время</span><strong id="sum-time">—</strong></div>
+        <div class="summary-row summary-row--price"><span>Стоимость</span><strong id="sum-price">—</strong></div>
+      </div>
+      <button class="btn-primary btn-lg btn-full" onclick="confirmBooking()">Подтвердить запись</button>
+    </div>
+
+    <div id="bs5" class="booking-step">
+      <div class="success-block">
+        <div class="success-block__icon">✓</div>
+        <h3 class="success-block__title">Вы записаны!</h3>
+        <p class="success-block__text" id="success-text"></p>
+        <button class="btn-ghost" onclick="showPage('home')">На главную</button>
+      </div>
+    </div>
+
+    <div class="booking-nav" id="booking-nav">
+      <button class="btn-ghost" id="btn-back" onclick="prevStep()" style="display:none">← Назад</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer__main">
+    <div class="footer__brand">
+      <div class="footer__logo">ONEVAKZ</div>
+      <p class="footer__tagline">Сервис онлайн-записи в салон красоты в Таразе.</p>
+    </div>
+    <div class="footer__col">
+      <div class="footer__col-title">Партнёрам</div>
+      <a href="#">Стать партнёром</a>
+      <a href="#">Контакты</a>
+      <a href="#">Карта сайта</a>
+    </div>
+    <div class="footer__col">
+      <div class="footer__col-title">Документы</div>
+      <a href="#">Политика конфиденциальности</a>
+      <a href="#">Пользовательское соглашение</a>
+      <a href="#">Правила онлайн-оплаты</a>
+    </div>
+    <div class="footer__col">
+      <div class="footer__col-title">Скачать приложение</div>
+      <div class="footer__apps">
+        <a href="#" class="app-badge">▶ App Store</a>
+        <a href="#" class="app-badge">▶ Google Play</a>
+        <a href="#" class="app-badge">▶ AppGallery</a>
+      </div>
+    </div>
+    <div class="footer__col">
+      <div class="footer__col-title">Следите за нами</div>
+      <div class="footer__socials">
+        <a href="#" class="social-btn">IG</a>
+        <a href="#" class="social-btn">FB</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer__bottom">
+    <div class="footer__payments">
+      <span class="payment-badge visa">VISA</span>
+      <span class="payment-badge mc">MC</span>
+    </div>
+    <div class="footer__copy">Все права защищены © ONEVAKZ 2025–2026</div>
+    <div class="footer__partner">Тараз, Казахстан</div>
+  </div>
+</footer>
+
+<script src="data.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
